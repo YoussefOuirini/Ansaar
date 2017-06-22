@@ -1,0 +1,33 @@
+{
+  "name": "ansaar",
+  "version": "1.0.0",
+  "description": "Ansaar app voor school",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YoussefOuirini/Ansaar.git"
+  },
+  "keywords": [
+    "Ansaar",
+    "School"
+  ],
+  "author": "Youssef Ouirini",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/YoussefOuirini/Ansaar/issues"
+  },
+  "homepage": "https://github.com/YoussefOuirini/Ansaar#readme",
+  "dependencies": {
+    "bcrypt": "^1.0.2",
+    "bcrypt-nodejs": "0.0.3",
+    "express": "^4.15.3",
+    "express-fileupload": "^0.1.3",
+    "express-session": "^1.15.3",
+    "pg": "^6.3.1",
+    "pug": "^2.0.0-rc.2",
+    "sequelize": "^4.1.0"
+  }
+}

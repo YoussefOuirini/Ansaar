@@ -1,0 +1,41 @@
+html
+	head
+		title Register
+	body
+		link(rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css")
+		script(src="../js/jquery-3.2.1.min.js")
+		script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
+		script.
+			$(function() {
+				$( "#date" ).datepicker({ 
+					dateFormat: 'dd-mm-yy',
+					changeMonth: true,
+					changeYear: true,
+					buttonImage: "../img/calendar.gif",
+					buttonImageOnly: true,
+					buttonText: "Select date",
+					showOn: "button",
+					minDate: "-100Y",
+					yearRange: "1950:2017"
+				}); 
+			});
+		h1 Schrijf je in door dit in te vullen:
+		form(method="post" action="/register")
+			input(type='text' placeholder="Voornaam" name="firstname" required)
+			br
+			input(type='text' placeholder="Achternaam" name="lastname" required)
+			br
+			input(id="date" type='date' placeholder="Geboortedatum" name="birthdate" required)
+			br
+			input(type='radio' name="gender" value="male" required) 
+			| Man
+			input(type='radio' name="gender" value="female" required) 
+			| Vrouw
+			br
+			input(type='tel' placeholder="Mobiele nummer" name="phoneNumber" required)
+			br
+			input(type='email' placeholder="Email" name="email" required)
+			br
+			input(type='password' placeholder="Wachtwoord" name="password" required)
+			br
+			input(type='submit' value="Registreren")

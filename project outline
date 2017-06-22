@@ -1,0 +1,15 @@
+Project outline:
+- Create online school platform
+
+Tables:
+- Students
+- Classes
+- Teachers
+- Parents
+
+Steps:
+- set up app.js
+- create landing page
+- create register page
+- create login page
+- create profile page
