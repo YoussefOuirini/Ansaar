@@ -1,14 +1,51 @@
 html
 	head
-		title
+		title Profiel
 	body
+		link(rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css")
+		script(src="../js/jquery-3.2.1.min.js")
+		script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
+		script(src="../js/datepicker.js")
 		header
 			nav
 				div
 					a(href= "/") Home
 				div 
 					a(href='/register') Register
+				div
+					a(href='/logout') Logout
 		main
 			h1 Welcome to your profile #{user.firstname}
+			h2 #{user.firstname} #{user.lastname} #{user.email}
+			div.kindinschrijven
+				h2 Schrijf je kind in:
+				form(action="/kindInschrijven" method="post")
+					input(type='text' placeholder="Voornaam" name="firstname" required)
+					br
+					input(type='text' placeholder="Achternaam" name="lastname" required)
+					br
+					input(id="date" type='date' placeholder="Geboortedatum" name="birthdate" required)
+					br
+					input(type='radio' name="gender" value="male" required) 
+					| Man
+					input(type='radio' name="gender" value="female" required) 
+					| Vrouw
+					br
+					select(type='text' placeholder="School" name="school" required)
+						option(value="Fioretti") Fioretti
+						option(value="Hilmare") Hilmare
+						option(value="Willinkschool") Willinkschool
+						option(value="Anders") Anders
+					br
+					select(type="text" placeholder="niveau" name="level" required)
+						option(value="begin") Niveau 1: kan het alfabet nog niet goed
+						option(value="gevorderd") Niveau 2: mijn kind nog niet goed lezen en schrijven
+						option(value="vergevorderd") Niveau 3: mijn kind kan goed lezen en schrijven
+					br
+					input(type='hidden' name="parentId" value=user.id)
+					input(type='submit' value="Inschrijving versturen")
+			div.kindgegevens
+				each student in students
+					h2 #{student.firstname} #{student.lastname}
 		footer
 			h4 &copy; 2017 Ansaar School Inc. All rights reserved.

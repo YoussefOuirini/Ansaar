@@ -2,5 +2,16 @@ html
 	head
 		title Ansaar School
 	body
-		h1 Hello there, welcome to ansaar!
-		p #{message}
+		header
+			nav
+				div
+					a(href= "/") Home
+				div 
+					a(href='/register') Register
+				div
+					a(href="/login") Login
+		main
+			h1 Hello there, welcome to ansaar!
+			p #{message}
+		footer
+			h4 &copy; 2017 Ansaar School Inc. All rights reserved.

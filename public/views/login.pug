@@ -9,13 +9,11 @@ html
 				div 
 					a(href='/register') Register
 		main
-			h1 Login page
+			h1 Login page:
 				form(action='/login' method='post')
-					p Email:
 					input(id='email' name='email' placeholder='Email' maxlength='35' required)
 					br
-					p Password:
-					input(type='password' id='password' name='password' maxlength='35' placeholder='Wachtword' required)
+					input(type='password' id='password' name='password' maxlength='35' placeholder='Wachtwoord' required)
 					br
 					input(type='submit' value='Login' id='submit')
 		footer

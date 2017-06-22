@@ -74,6 +74,51 @@ Parent.hasMany(Student);
 Teacher.belongsTo(Class);
 Class.hasOne(Teacher);
 
+Class.sync({force: false})
+	.then(()=>{
+		Class.findOne({
+			where: {
+				className: "Klas 1 Aboe Bakr"
+			}
+		}).then((klass)=>{
+			console.log(klass)
+			if(klass===null) {
+				return Class.create({
+					className: "Klas 1 Aboe Bakr"
+				})
+			}
+			return
+		}).then().catch(error=>{console.log(error)})
+	})
+
+Teacher.sync({force: false})
+	.then(()=>{
+		Teacher.findOne({
+			where: {
+				email: "youssefouirini@gmail.com"
+			}
+		}).then((teacher)=>{
+			if (teacher === null) {
+				bcrypt.hash("pizza", null, null, (err,hash)=>{
+					if (err) {
+						throw err
+					}
+					return Teacher.create({
+						firstname: "Youssef",
+						lastname: "Ouirini",
+						email: "youssefouirini@gmail.com",
+						birthdate: "18-06-1992",
+						gender: "male",
+						password: hash,
+						phoneNumber: "0684132765",
+						classId: '1'
+					})
+				});
+			} 
+			return
+		}).then().catch(error=>{console.log(error)})
+	})
+
 // Creates session when user logs in
 app.use(session({
 	secret: `${process.env.SECRET_SESSION}`,
@@ -147,27 +192,73 @@ app.post('/login', (req, res) => {
 		where: {
 			email:req.body.email
 		}
-	}).then((user) => { //This part needs fixing, when the email is not in the database it should not pass on, it will yield errors.
-		if(user === null) {
-        	res.redirect('/?message=' + encodeURIComponent("Does not exist!"));
-			return;
-		}
-		bcrypt.compare(req.body.password, user.password, (err, data)=>{
-			if (err) {
-					throw err;
-			} else {
-				if(user !== null && data === true) {
-					req.session.user = user
-					res.redirect('/profile');
-				} else {
-					res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
-				}
+	}).then((user) => {
+		Teacher.findOne({
+			where: {
+				email: req.body.email
 			}
-		});
+		}).then((teacher)=>{
+			if ((teacher!==null)) {
+				bcrypt.compare(req.body.password, teacher.password, (err, data)=>{
+					if (err) {
+						throw err;
+					} else {
+						if(teacher !== null && data== true) {
+							req.session.user = teacher
+							res.redirect('/teacher');
+						} else {
+							res.redirect('/?message=' + encodeURIComponent("Invalid email or password."))
+						}
+					}
+				})
+			} else {
+				if(user === null) {
+		        	res.redirect('/?message=' + encodeURIComponent("Does not exist!"));
+					return;
+				}
+				bcrypt.compare(req.body.password, user.password, (err, data)=>{
+					if (err) {
+							throw err;
+					} else {
+						if(user !== null && data === true) {
+							req.session.user = user
+							res.redirect('/profile');
+						} else {
+							res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
+						}
+					}
+				});
+			}
+		})
 	}), (error)=> {
 		res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
 	};
 });
+
+app.get('/teacher', (req,res)=>{
+	var teacher= req.session.user;
+	 if (teacher === undefined) {
+        res.redirect('/?message=' + encodeURIComponent("Please log in to view your profile."));
+        return
+    } 
+	Teacher.findOne({
+			where: {
+				email: teacher.email
+			}
+		}).then((teacher)=>{
+			Student.findAll({
+				where: {
+					classId: teacher.classId
+				}
+			})
+				.then((students)=>{
+					res.render('public/views/teacher', {
+						teacher: teacher,
+						students: students
+					})
+				})
+		})
+})
 
 app.get('/profile', (req, res)=> {
     var user = req.session.user;
@@ -175,10 +266,50 @@ app.get('/profile', (req, res)=> {
         res.redirect('/?message=' + encodeURIComponent("Please log in to view your profile."));
         return
     } 
-	res.render('public/views/profile', {
-    	user: user
-	});
+    Student.findAll({
+    	where: {
+    		parentId: user.id
+    	}
+    }).then((students)=>{
+    	res.render('public/views/profile', {
+    		user: user,
+    		students: students
+		});
+    })
 });
+
+app.post('/kindInschrijven', (req,res)=>{
+	Student.sync()
+		.then(()=>{
+			Student.findOne({
+				where:{
+					firstname: req.body.firstname,
+					lastname: req.body.lastname
+				}
+			}).then((student)=>{
+				if(student!==null && req.body.firstname === student.firstname && req.body.lastname === student.lastname) {
+					res.redirect('/?message=' + encodeURIComponent("Uw kind is al ingeschreven."));
+					return
+				} else {
+					Student.sync()
+						.then(()=>{
+							return Student.create({
+								firstname: req.body.firstname,
+								lastname: req.body.lastname,
+								birthdate: req.body.birthdate,
+								gender: req.body.gender,
+								school: req.body.school,
+								level: req.body.level,
+								parentId: req.body.parentId
+							})
+						})
+						.then(()=>{
+							res.redirect('/profile');
+						})
+				}
+			})
+		})
+})
 
 app.get('/logout', (req, res)=> {
     req.session.destroy(function(error) {
