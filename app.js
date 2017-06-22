@@ -81,7 +81,6 @@ Class.sync({force: false})
 				className: "Klas 1 Aboe Bakr"
 			}
 		}).then((klass)=>{
-			console.log(klass)
 			if(klass===null) {
 				return Class.create({
 					className: "Klas 1 Aboe Bakr"
