@@ -330,6 +330,56 @@ app.post('/intake', (req,res)=>{
 	})
 })
 
+app.post('/teacher', (req,res)=>{
+	Teacher.sync({force: false})
+		.then(()=>{
+		Teacher.findOne({
+			where: {
+				email: req.body.email
+			}
+		}).then((teacher)=>{
+			if (teacher !== null && teacher.email===req.body.email) {
+				res.redirect('/?message=' + encodeURIComponent("Email van de leraar is al bezet"))
+				return
+			} else {
+				bcrypt.hash("pizza", null, null, (err,hash)=>{
+					if (err) {
+						throw err
+					}
+					return Teacher.create({
+						firstname: req.body.firstname,
+						lastname: req.body.lastname,
+						email: req.body.email,
+						birthdate: req.body.birthdate,
+						gender: req.body.gender,
+						password: hash,
+						phoneNumber: req.body.phoneNumber,
+						classId: req.body.classId
+					})
+				});
+			}
+		}).then().catch(error=>{console.log(error)})
+	})
+})
+
+app.post('/klassen', (req,res)=>{
+	Class.findOne({
+		where: {
+			className: req.body.className
+		}
+	}).then((klas)=>{
+		if(klas!==null) {
+			res.redirect('/?message=' + encodeURIComponent("Klasnaam is al bezet"))
+		} else {
+			Class.create({
+				className: req.body.className
+			}).then(()=>{
+				res.redirect('/teacher')
+			}).then().catch(error=>{console.log(error)})
+		}
+	})
+})
+
 app.get('/logout', (req, res)=> {
     req.session.destroy(function(error) {
         if(error) {

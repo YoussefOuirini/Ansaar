@@ -6,6 +6,7 @@ html
 		script(src="../js/jquery-3.2.1.min.js")
 		script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
 		script(src="../js/datepicker.js")
+		link(rel="stylesheet" src)
 		header
 			nav
 				div
@@ -41,8 +42,8 @@ html
 					h3 #{intake.firstname} #{intake.lastname}
 					form(action='/intake' method='post')
 						input(type='hidden' name='id' value=intake.id)
-						each klas in klassen
-							select(type="text" name="classId")
+						select(type="text" name="classId")
+							each klas in klassen
 								option(value=klas.id) #{klas.className}
 						input(type='submit' value='Submit')
 				h2 Voeg leraren toe:
@@ -53,13 +54,18 @@ html
 					br
 					input(id='date' type='' placeholder='Geboortedatum' name='birthdate' required)
 					br
-					input(type='text' placeholder='Geslacht' name='gender')
+					input(type='text' placeholder='Geslacht' name='gender' required)
 					br
-					input(type='text' placeholder='wachtwoord' name='password')
+					input(type='text' placeholder='wachtwoord' name='password' required)
 					br
-					each klas in klassen
-						select(type="text" name="classId")
+					select(type="text" name="classId" required)
+						each klas in klassen
 							option(value=klas.id) #{klas.className}
+					br
+					input(type='submit' value='Submit')
+				h2 Voeg klassen toe:
+				form(action='klassen' method='post')
+					input(type='text' placeholder='klasnaam' name='className' required)
 					br
 					input(type='submit' value='Submit')
 		footer
