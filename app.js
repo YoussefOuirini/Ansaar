@@ -32,7 +32,6 @@ var Student = sequelize.define('student', {
 	school: Sequelize.STRING,
 	level: Sequelize.STRING,
 	book: Sequelize.BOOLEAN,
-	approved: Sequelize.BOOLEAN
 });
 
 var Parent = sequelize.define('parent', {
@@ -203,7 +202,7 @@ app.post('/login', (req, res) => {
 						throw err;
 					} else {
 						if(teacher !== null && data== true) {
-							req.session.user = teacher
+							req.session.user = teacher;
 							res.redirect('/teacher');
 						} else {
 							res.redirect('/?message=' + encodeURIComponent("Invalid email or password."))
@@ -220,7 +219,7 @@ app.post('/login', (req, res) => {
 							throw err;
 					} else {
 						if(user !== null && data === true) {
-							req.session.user = user
+							req.session.user = user;
 							res.redirect('/profile');
 						} else {
 							res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
@@ -249,13 +248,19 @@ app.get('/teacher', (req,res)=>{
 				where: {
 					classId: teacher.classId
 				}
-			})
-				.then((students)=>{
+			}).then((students)=>{
+				Student.findAll({
+					where: {
+						classId: null
+					}
+				}).then((intakes)=>{
 					res.render('public/views/teacher', {
 						teacher: teacher,
-						students: students
+						students: students,
+						intakes: intakes
 					})
 				})
+			})
 		})
 })
 
@@ -308,6 +313,18 @@ app.post('/kindInschrijven', (req,res)=>{
 				}
 			})
 		})
+})
+
+app.post('/intake', (req,res)=>{
+	Student.update({
+		classId: req.body.classId
+		},{
+		where: {
+			id: req.body.id
+		}
+	}).then(()=>{
+		res.redirect('/teacher')
+	})
 })
 
 app.get('/logout', (req, res)=> {

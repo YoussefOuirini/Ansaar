@@ -12,11 +12,23 @@ html
 					a(href= "/") Home
 				div 
 					a(href='/register') Register
+				div
+					a(href='/logout') Logout
 		main
 			h1 Welkom bij uw profiel #{teacher.firstname}!
 			div.kindgegevens
 				h2 Dit zijn uw studenten:
 				each student in students
 					h2 #{student.firstname} #{student.lastname}
-	footer
-		h4 &copy; 2017 Ansaar School Inc. All rights reserved.
+				h2 Dit zijn de studenten die nog geaccepteerd moeten worden:
+				each intake in intakes
+					h3 #{intake.firstname} #{intake.lastname}
+					form(action='/intake' method='post')
+						input(type='hidden' name='id' value=intake.id)
+						select(type="text" name="classId")
+							option(value=1) Klas 1 Aboe Bakr
+							option(value=2) Klas 2 Umar
+							option(value=3) Klas 3 Khadidja
+						input(type='submit' value='Submit')
+		footer
+			h4 &copy; 2017 Ansaar School Inc. All rights reserved.
