@@ -19,16 +19,48 @@ html
 			div.kindgegevens
 				h2 Dit zijn uw studenten:
 				each student in students
-					h2 #{student.firstname} #{student.lastname}
+					table
+						tr
+							th Voornaam
+							th Achternaam
+							th Geboortedatum
+							th School
+							th Ouder
+							th Telefoonnummer ouder
+							th Email ouder
+						tr
+							td #{student.firstname}
+							td #{student.lastname}
+							td #{student.birthdate}
+							td #{student.school}
+							td #{student.parent.firstname} #{student.parent.lastname}
+							td #{student.parent.phoneNumber}
+							td #{student.parent.email}
 				h2 Dit zijn de studenten die nog geaccepteerd moeten worden:
 				each intake in intakes
 					h3 #{intake.firstname} #{intake.lastname}
 					form(action='/intake' method='post')
 						input(type='hidden' name='id' value=intake.id)
-						select(type="text" name="classId")
-							option(value=1) Klas 1 Aboe Bakr
-							option(value=2) Klas 2 Umar
-							option(value=3) Klas 3 Khadidja
+						each klas in klassen
+							select(type="text" name="classId")
+								option(value=klas.id) #{klas.className}
 						input(type='submit' value='Submit')
+				h2 Voeg leraren toe:
+				form(action='/teacher' method='post')
+					input(type='text' placeholder='Voornaam' name='firstname' required)
+					br
+					input(type='text' placeholder='Achternaam' name='lasttname' required)
+					br
+					input(id='date' type='' placeholder='Geboortedatum' name='birthdate' required)
+					br
+					input(type='text' placeholder='Geslacht' name='gender')
+					br
+					input(type='text' placeholder='wachtwoord' name='password')
+					br
+					each klas in klassen
+						select(type="text" name="classId")
+							option(value=klas.id) #{klas.className}
+					br
+					input(type='submit' value='Submit')
 		footer
 			h4 &copy; 2017 Ansaar School Inc. All rights reserved.

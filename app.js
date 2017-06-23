@@ -245,24 +245,27 @@ app.get('/teacher', (req,res)=>{
 			}
 		}).then((teacher)=>{
 			Student.findAll({
-				where: {
-					classId: teacher.classId
-				}
+				include: [{model: Parent, as: 'parent'}],
+				where: {classId: teacher.classId}
 			}).then((students)=>{
 				Student.findAll({
 					where: {
 						classId: null
 					}
 				}).then((intakes)=>{
-					res.render('public/views/teacher', {
-						teacher: teacher,
-						students: students,
-						intakes: intakes
-					})
+					Class.findAll()
+						.then((klassen)=>{
+							res.render('public/views/teacher', {
+								teacher: teacher,
+								students: students,
+								intakes: intakes,
+								klassen: klassen
+							})
+						})
 				})
 			})
 		})
-})
+});
 
 app.get('/profile', (req, res)=> {
     var user = req.session.user;
