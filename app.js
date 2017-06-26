@@ -54,46 +54,38 @@ var Teacher = sequelize.define('teacher', {
 	phoneNumber: Sequelize.STRING
 });
 
-var Class= sequelize.define('class', {
-	className: Sequelize.STRING,
+var Group= sequelize.define('group', {
+	groupName: Sequelize.STRING,
 })
 
-var Attendance= sequelize.define('attendance', {
-	date: Sequelize.DATE,
-	attendance: Sequelize.STRING
+var Lesson= sequelize.define('lesson', {
+	homework: Sequelize.STRING,
+	attendance: Sequelize.STRING,
+	date: Sequelize.STRING,
+	behaviour: Sequelize.STRING,
+	nextHomework: Sequelize.STRING
 })
 
-sequelize.sync({force: false}) //Change false to true to wipe clean the whole database.
 
 // Setting up the model by linking the tables to each other
-Student.belongsTo(Class);
-Class.hasMany(Student);
+Student.belongsTo(Group);
+Group.hasMany(Student);
 Student.belongsTo(Parent);
 Parent.hasMany(Student);
-Teacher.belongsTo(Class);
-Class.hasOne(Teacher);
+Teacher.belongsTo(Group);
+Group.hasOne(Teacher);
+Lesson.belongsTo(Group);
+Group.hasMany(Lesson);
+Teacher.hasMany(Lesson);
+Lesson.belongsTo(Teacher);
+Lesson.hasMany(Student);
+Student.belongsTo(Lesson);
 
-Class.sync({force: false})
-	.then(()=>{
-		Class.findOne({
-			where: {
-				className: "Klas 1 Aboe Bakr"
-			}
-		}).then((klass)=>{
-			if(klass===null) {
-				return Class.create({
-					className: "Klas 1 Aboe Bakr"
-				})
-			}
-			return
-		}).then().catch(error=>{console.log(error)})
-	})
-
-Teacher.sync({force: false})
+sequelize.sync({force:false}) 
 	.then(()=>{
 		Teacher.findOne({
 			where: {
-				email: "youssefouirini@gmail.com"
+				email: "youssef@ouirini.com"
 			}
 		}).then((teacher)=>{
 			if (teacher === null) {
@@ -101,15 +93,15 @@ Teacher.sync({force: false})
 					if (err) {
 						throw err
 					}
-					return Teacher.create({
+					return Teacher.create({ // This is the headmaster's admin account who does not have classes.
 						firstname: "Youssef",
 						lastname: "Ouirini",
-						email: "youssefouirini@gmail.com",
+						email: "youssef@ouirini.com",
 						birthdate: "18-06-1992",
 						gender: "male",
 						password: hash,
 						phoneNumber: "0684132765",
-						classId: '1'
+						// groupId: 1
 					})
 				});
 			} 
@@ -246,14 +238,14 @@ app.get('/teacher', (req,res)=>{
 		}).then((teacher)=>{
 			Student.findAll({
 				include: [{model: Parent, as: 'parent'}],
-				where: {classId: teacher.classId}
+				where: {groupId: teacher.groupId}
 			}).then((students)=>{
 				Student.findAll({
 					where: {
-						classId: null
+						groupId: null
 					}
 				}).then((intakes)=>{
-					Class.findAll()
+					Group.findAll()
 						.then((klassen)=>{
 							res.render('public/views/teacher', {
 								teacher: teacher,
@@ -320,7 +312,7 @@ app.post('/kindInschrijven', (req,res)=>{
 
 app.post('/intake', (req,res)=>{
 	Student.update({
-		classId: req.body.classId
+		groupId: req.body.groupId
 		},{
 		where: {
 			id: req.body.id
@@ -354,7 +346,9 @@ app.post('/teacher', (req,res)=>{
 						gender: req.body.gender,
 						password: hash,
 						phoneNumber: req.body.phoneNumber,
-						classId: req.body.classId
+						groupId: req.body.groupId
+					}).then(()=>{
+						res.redirect('/teacher')
 					})
 				});
 			}
@@ -363,22 +357,68 @@ app.post('/teacher', (req,res)=>{
 })
 
 app.post('/klassen', (req,res)=>{
-	Class.findOne({
+	Group.findOne({
 		where: {
-			className: req.body.className
+			groupName: req.body.groupName
 		}
 	}).then((klas)=>{
 		if(klas!==null) {
 			res.redirect('/?message=' + encodeURIComponent("Klasnaam is al bezet"))
 		} else {
-			Class.create({
-				className: req.body.className
+			Group.create({
+				groupName: req.body.groupName
 			}).then(()=>{
 				res.redirect('/teacher')
 			}).then().catch(error=>{console.log(error)})
 		}
 	})
+}) 
+
+app.post('/lesson', (req,res)=>{
+	Lesson.findOne({
+		where: {
+			date: req.body.date
+		}
+	}).then((lesson)=>{
+		if(lesson!= null) {
+			res.redirect('/?message' +encodeURIComponent ("Les is al gemaakt."))
+		} else {
+			var create=[];
+			for (i=0; i < req.body.behaviour.length; i++) {
+				create.push(Lesson.create({
+					behaviour: req.body.behaviour[i],
+					attendance: req.body.attendance[i],
+					teacherId: req.body.teacherId,
+					date: req.body.date,
+					homework: req.body.homework[i],
+					groupId: req.body.groupId,
+					nextHomework: req.body.nextHomework
+				}))
+			}
+			Promise.all(create)
+		}
+	}).then(()=>{
+		res.redirect('/teacher')
+	}).then().catch(error=>{console.log(error)})
 })
+
+/*
+
+Instead of bulkcreate need to wrap.
+Behaviour and attendance are an array that need to loop
+Create to get all finished
+Need to use create and a loop
+Problem with that is that you dont know when create is finished.
+Promise.all waits untill promises are done which takes an array of promises.
+Every create is a promise.
+All the creates need to be tied to the promise.all
+1.) for loop & empty array
+2.) generated promises in empty array
+3.) array in Promise.all
+4.) After promise.all .then()
+
+Length of the for loop is based on array of the attendance of behaviour
+*/
 
 app.get('/logout', (req, res)=> {
     req.session.destroy(function(error) {
