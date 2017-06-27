@@ -6,6 +6,7 @@ html
 		script(src="../js/jquery-3.2.1.min.js")
 		script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
 		script(src="../js/datepicker.js")
+		link(rel="stylesheet" href="../css/main.css")
 		header
 			nav
 				div
@@ -17,6 +18,25 @@ html
 		main
 			h1 Welcome to your profile #{user.firstname}
 			h2 #{user.firstname} #{user.lastname} #{user.email}
+			div.kindgegevens
+				table 
+					tr
+						th Lesdatum
+						th Voornaam
+						th Achternaam
+						th Aanwezigheid
+						th Gedrag
+						th Huiswerk
+						th Huiswerk voor volgende les
+					each lesson in lessons
+						tr
+							td #{lesson.date}
+							td #{lesson.student.firstname} 
+							td #{lesson.student.lastname}
+							td #{lesson.attendance}
+							td #{lesson.behaviour}
+							td #{lesson.homework} 
+							td #{lesson.nextHomework}
 			div.kindinschrijven
 				h2 Schrijf je kind in:
 				form(action="/kindInschrijven" method="post")
@@ -44,8 +64,5 @@ html
 					br
 					input(type='hidden' name="parentId" value=user.id)
 					input(type='submit' value="Inschrijving versturen")
-			div.kindgegevens
-				each student in students
-					h2 #{student.firstname} #{student.lastname}
 		footer
 			h4 &copy; 2017 Ansaar School Inc. All rights reserved.

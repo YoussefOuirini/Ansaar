@@ -78,8 +78,8 @@ Lesson.belongsTo(Group);
 Group.hasMany(Lesson);
 Teacher.hasMany(Lesson);
 Lesson.belongsTo(Teacher);
-Lesson.hasMany(Student);
-Student.belongsTo(Lesson);
+Lesson.belongsTo(Student);
+Student.hasMany(Lesson);
 
 sequelize.sync({force:false}) 
 	.then(()=>{
@@ -101,7 +101,7 @@ sequelize.sync({force:false})
 						gender: "male",
 						password: hash,
 						phoneNumber: "0684132765",
-						// groupId: 1
+						// groupId: '1'
 					})
 				});
 			} 
@@ -133,9 +133,7 @@ app.post('/register', (req,res)=>{
 	Parent.sync()
 		.then(()=>{
 			Parent.findOne({
-				where: {
-					email: req.body.email
-				}
+				where: {email: req.body.email}
 			})
 			.then((user)=> {
 				if(user!== null && req.body.email === user.email) {
@@ -265,14 +263,15 @@ app.get('/profile', (req, res)=> {
         res.redirect('/?message=' + encodeURIComponent("Please log in to view your profile."));
         return
     } 
-    Student.findAll({
-    	where: {
+    Lesson.findAll({
+    	include: [{model: Student, as:'student', where: {
     		parentId: user.id
-    	}
-    }).then((students)=>{
+    	}}]
+    }).then((lessons)=>{
+    	console.log(lessons.student);
     	res.render('public/views/profile', {
     		user: user,
-    		students: students
+    		lessons: lessons
 		});
     })
 });
@@ -377,25 +376,42 @@ app.post('/klassen', (req,res)=>{
 app.post('/lesson', (req,res)=>{
 	Lesson.findOne({
 		where: {
-			date: req.body.date
+			date: req.body.date,
+			groupId: req.body.groupId
 		}
 	}).then((lesson)=>{
 		if(lesson!= null) {
-			res.redirect('/?message' +encodeURIComponent ("Les is al gemaakt."))
+			res.redirect('/?message=' +encodeURIComponent ("Les is al gemaakt."))
 		} else {
-			var create=[];
-			for (i=0; i < req.body.behaviour.length; i++) {
-				create.push(Lesson.create({
-					behaviour: req.body.behaviour[i],
-					attendance: req.body.attendance[i],
+			console.log(req.body.behaviour)
+			if (req.body.behaviour.constructor === Array){	
+				console.log('Array happens: ')
+				var create=[];		
+				for (i=0; i < req.body.behaviour.length; i++) {
+					create.push(Lesson.create({
+						behaviour: req.body.behaviour[i],
+						attendance: req.body.attendance[i],
+						teacherId: req.body.teacherId,
+						date: req.body.date,
+						homework: req.body.homework[i],
+						groupId: req.body.groupId,
+						nextHomework: req.body.nextHomework,
+						studentId: req.body.studentId[i]
+					}))
+				}
+				Promise.all(create)
+			} else {
+				Lesson.create({
+					behaviour: req.body.behaviour,
+					attendance: req.body.attendance,
 					teacherId: req.body.teacherId,
 					date: req.body.date,
-					homework: req.body.homework[i],
+					homework: req.body.homework,
 					groupId: req.body.groupId,
-					nextHomework: req.body.nextHomework
-				}))
+					nextHomework: req.body.nextHomework,
+					studentId: req.body.studentId
+				})
 			}
-			Promise.all(create)
 		}
 	}).then(()=>{
 		res.redirect('/teacher')

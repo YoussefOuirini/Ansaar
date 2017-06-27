@@ -17,64 +17,66 @@ html
 					a(href='/logout') Logout
 		main
 			h1 Welkom bij uw profiel #{teacher.firstname} #{teacher.lastname}!
-			div.kindgegevens
-				h2 Dit zijn uw studenten:
-				table
-					tr
-						th Voornaam
-						th Achternaam
-						th Geboortedatum
-						th School
-						th Ouder
-						th Telefoonnummer ouder
-						th Email ouder
-					each student in students
+			if teacher.groupId !== null
+				div.kindgegevens
+					h2 Dit zijn uw studenten:
+					table
 						tr
-							td #{student.firstname}
-							td #{student.lastname}
-							td #{student.birthdate}
-							td #{student.school}
-							td #{student.parent.firstname} #{student.parent.lastname}
-							td #{student.parent.phoneNumber}
-							td #{student.parent.email}
-			div.lessons
-				h2 Voeg een les toe:
-					form(action='/lesson' method='post')
-						table
+							th Voornaam
+							th Achternaam
+							th Geboortedatum
+							th School
+							th Ouder
+							th Telefoonnummer ouder
+							th Email ouder
+						each student in students
 							tr
-								th Voornaam
-								th Achternaam
-								th Gedrag
-								th Aanwezigheid
-								th Huiswerk
-							each student in students
+								td #{student.firstname}
+								td #{student.lastname}
+								td #{student.birthdate}
+								td #{student.school}
+								td #{student.parent.firstname} #{student.parent.lastname}
+								td #{student.parent.phoneNumber}
+								td #{student.parent.email}
+				div.lessons
+					h2 Voeg een les toe:
+						form(action='/lesson' method='post')
+							table
 								tr
-									td #{student.firstname}
-									td #{student.lastname}
-									td
-										select(type='text' name='behaviour' required)
-											option(value='slecht') Slecht
-											option(value='voldoende') Voldoende
-											option(value='goed') Goed
-									td
-										select(type='text' name='attendance' required)
-											option(value='Aanwezig') Aanwezig
-											option(value='Te laat') Te laat
-											option(value="Afwezig zonder reden") Afwezig zonder reden
-											option(value='Ziek') Ziek
-									td
-										select(type='text' name='homework' required)
-											option(value='gemaakt') Gemaakt
-											option(value='half gemaakt') Half gemaakt
-											option(value='niet gemaakt') Niet gemaakt
-						br
-						input(type='hidden' name='teacherId' value=teacher.id)
-						input(type='hidden' name='groupId' value=teacher.groupId)
-						input(id='lessonDate' type='' name='date' required)
-						br
-						textarea(type='text' name='nextHomework' placeholder="Huiswerk voor de volgende les" required) 
-						br
-						input(type='submit' Value='Submit')
+									th Voornaam
+									th Achternaam
+									th Gedrag
+									th Aanwezigheid
+									th Huiswerk
+								each student in students
+									tr
+										td #{student.firstname}
+										td #{student.lastname}
+										td
+											select(type='text' name='behaviour' required)
+												option(value='slecht') Slecht
+												option(value='voldoende') Voldoende
+												option(value='goed') Goed
+										td
+											select(type='text' name='attendance' required)
+												option(value='Aanwezig') Aanwezig
+												option(value='Te laat') Te laat
+												option(value="Afwezig zonder reden") Afwezig zonder reden
+												option(value='Ziek') Ziek
+										td
+											select(type='text' name='homework' required)
+												option(value='gemaakt') Gemaakt
+												option(value='half gemaakt') Half gemaakt
+												option(value='niet gemaakt') Niet gemaakt
+									input(type='hidden' name='studentId' value=student.id)
+							br
+							input(type='hidden' name='teacherId' value=teacher.id)
+							input(type='hidden' name='groupId' value=teacher.groupId)
+							input(id='lessonDate' type='' name='date' required)
+							br
+							textarea(type='text' name='nextHomework' placeholder="Huiswerk voor de volgende les" required) 
+							br
+							input(type='submit' Value='Submit')
 			div.intakes
 				h2 Dit zijn de studenten die nog geaccepteerd moeten worden:
 				each intake in intakes
