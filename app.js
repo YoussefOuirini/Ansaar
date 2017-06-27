@@ -7,6 +7,11 @@ const session= require('express-session');
 const bcrypt= require('bcrypt-nodejs');
 const fileUpload = require('express-fileupload');
 
+// using SendGrid's v3 Node.js Library
+// https://github.com/sendgrid/sendgrid-nodejs
+const helper = require('sendgrid').mail;
+const sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+
 // Setting up the link to the database.
 const sequelize= new Sequelize('ansaar_app', process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
 	host: 'localhost',
@@ -418,24 +423,6 @@ app.post('/lesson', (req,res)=>{
 	}).then().catch(error=>{console.log(error)})
 })
 
-/*
-
-Instead of bulkcreate need to wrap.
-Behaviour and attendance are an array that need to loop
-Create to get all finished
-Need to use create and a loop
-Problem with that is that you dont know when create is finished.
-Promise.all waits untill promises are done which takes an array of promises.
-Every create is a promise.
-All the creates need to be tied to the promise.all
-1.) for loop & empty array
-2.) generated promises in empty array
-3.) array in Promise.all
-4.) After promise.all .then()
-
-Length of the for loop is based on array of the attendance of behaviour
-*/
-
 app.get('/logout', (req, res)=> {
     req.session.destroy(function(error) {
         if(error) {
@@ -444,6 +431,38 @@ app.get('/logout', (req, res)=> {
         res.redirect('/?message=' + encodeURIComponent("Successfully logged out."));
     })
 });
+
+app.post('/mail', (req,res)=>{
+	Parent.findAll({
+		attributes: ['email']
+	})
+	.then((parents)=>{
+		var fromEmail = new helper.Email('alansaarschool.hillegom@gmail.com');
+		for (var i=0; i < parents.length; i++) {
+			var toEmail= new helper.Email(parents[i].email)
+			var mail = new helper.Mail(fromEmail, subject, toEmail, content);
+			var subject = req.body.subject;
+			var content = new helper.Content('text/plain', req.body.content);
+			var mail = new helper.Mail(fromEmail, subject, toEmail, content);
+			var request = sg.emptyRequest({
+			  method: 'POST',
+			  path: '/v3/mail/send',
+			  body: mail.toJSON()
+			});
+			sg.API(request, function (error, response) {
+				if (error) {
+					console.log('Error response received');
+				}
+				console.log(response.statusCode);
+				console.log(response.body);
+				console.log(response.headers);
+			});
+		}
+	})
+	.then(()=>{
+		res.redirect('/?message=' + encodeURIComponent("Emails zijn verstuurd!"))
+	})
+})
 
 var server = app.listen(3000, function() {
   console.log('The server is running at http//:localhost:' + server.address().port)

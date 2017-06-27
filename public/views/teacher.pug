@@ -54,9 +54,9 @@ html
 										td #{student.lastname}
 										td
 											select(type='text' name='behaviour' required)
-												option(value='slecht') Slecht
-												option(value='voldoende') Voldoende
 												option(value='goed') Goed
+												option(value='voldoende') Voldoende
+												option(value='slecht') Slecht
 										td
 											select(type='text' name='attendance' required)
 												option(value='Aanwezig') Aanwezig
@@ -72,11 +72,19 @@ html
 							br
 							input(type='hidden' name='teacherId' value=teacher.id)
 							input(type='hidden' name='groupId' value=teacher.groupId)
-							input(id='lessonDate' type='' name='date' required)
+							input(id='lessonDate' placeholder='Lesdatum' type='' name='date' required)
 							br
-							textarea(type='text' name='nextHomework' placeholder="Huiswerk voor de volgende les" required) 
+							textarea(type='text' rows=10, cols=50, name='nextHomework' placeholder='Huiswerk voor de volgende les.' required)
 							br
 							input(type='submit' Value='Submit')
+			div.mail
+				h2 Verstuur een mail naar alle ouders
+				form(action='/mail' method='post')
+					input(type='text' size=50 name='subject' placeholder='Onderwerp' required)
+					br
+					textarea(type='text' rows=10, cols=50, name='content' placeholder='Bericht' required)
+					br
+					input(type='submit' value='Submit')
 			div.intakes
 				h2 Dit zijn de studenten die nog geaccepteerd moeten worden:
 				each intake in intakes

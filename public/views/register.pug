@@ -14,25 +14,26 @@ html
 				div 
 					a(href='/login') Login
 		main
-			h1 Schrijf je in door dit in te vullen:
-			form(method="post" action="/register")
-				input(type='text' placeholder="Voornaam" name="firstname" required)
-				br
-				input(type='text' placeholder="Achternaam" name="lastname" required)
-				br
-				input(id="date" type='date' placeholder="Geboortedatum" name="birthdate" required)
-				br
-				input(type='radio' name="gender" value="male" required) 
-				| Man
-				input(type='radio' name="gender" value="female" required) 
-				| Vrouw
-				br
-				input(type='tel' placeholder="Mobiele nummer" name="phoneNumber" required)
-				br
-				input(type='email' placeholder="Email" name="email" required)
-				br
-				input(type='password' placeholder="Wachtwoord" name="password" required)
-				br
-				input(type='submit' value="Registreren")
+			div.register
+				h1 Schrijf je in door dit in te vullen:
+				form(method="post" action="/register")
+					input(type='text' placeholder="Voornaam" name="firstname" required)
+					br
+					input(type='text' placeholder="Achternaam" name="lastname" required)
+					br
+					input(id="date" type='date' placeholder="Geboortedatum" name="birthdate" required)
+					br
+					input(type='radio' name="gender" value="male" required) 
+					| Man
+					input(type='radio' name="gender" value="female" required) 
+					| Vrouw
+					br
+					input(type='tel' placeholder="Mobiele nummer" name="phoneNumber" required)
+					br
+					input(type='email' placeholder="Email" name="email" required)
+					br
+					input(type='password' placeholder="Wachtwoord" name="password" required)
+					br
+					input(type='submit' value="Registreren")
 		footer
 			h4 &copy; 2017 Ansaar School Inc. All rights reserved.
