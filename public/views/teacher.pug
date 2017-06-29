@@ -1,130 +1,147 @@
-html
+html(lang='en')
 	head
-		title Leraar
-	body
+		meta(charset='utf-8')
+		meta(http-equiv='X-UA-Compatible', content='IE=edge')
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+		meta(name='description', content='')
+		meta(name='author', content='')
+		title Leraar Pagina - Ansaar - Hillegom
+		// Bootstrap Core CSS
+		link(href='../css/bootstrap.min.css', rel='stylesheet')
+		// Custom CSS
+		link(href='../css/business-casual.css', rel='stylesheet')
+		// Fonts
+		link(href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800', rel='stylesheet', type='text/css')
+		link(href='https://fonts.googleapis.com/css?family=Josefin+Slab:100,300,400,600,700,100italic,300italic,400italic,600italic,700italic', rel='stylesheet', type='text/css')
 		link(rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css")
+		// HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+		// WARNING: Respond.js doesn't work if you view the page via file://
+		//if lt IE 9
+		script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
+		script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')
 		script(src="../js/jquery-3.2.1.min.js")
 		script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
 		script(src="../js/datepicker.js")
-		link(rel="stylesheet" href="../css/main.css")
-		header
-			nav
-				div
-					a(href= "/") Home
-				div 
-					a(href='/register') Register
-				div
-					a(href='/logout') Logout
-		main
-			h1 Welkom bij uw profiel #{teacher.firstname} #{teacher.lastname}!
-			if teacher.groupId !== null
-				div.kindgegevens
-					h2 Dit zijn uw studenten:
-					table
-						tr
-							th Voornaam
-							th Achternaam
-							th Geboortedatum
-							th School
-							th Ouder
-							th Telefoonnummer ouder
-							th Email ouder
-						each student in students
+	body
+		.brand Ansaar Hillegom
+		.address-bar 3481 Melrose Place | Beverly Hills, CA 90210 | 123.456.7890
+		// Navigation
+		nav.navbar.navbar-default(role='navigation')
+			.container
+				// Brand and toggle get grouped for better mobile display
+				.navbar-header
+					button.navbar-toggle(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1')
+						span.sr-only Toggle navigation
+						span.icon-bar
+						span.icon-bar
+						span.icon-bar
+					// navbar-brand is hidden on larger screens, but visible when the menu is collapsed
+					a.navbar-brand(href='index.html') Business Casual
+				// Collect the nav links, forms, and other content for toggling
+				#bs-example-navbar-collapse-1.collapse.navbar-collapse
+					ul.nav.navbar-nav
+						li
+							a(href='/') Home
+						li
+							a(href='/about') About
+						li
+							a(href='/contact') Contact
+						li
+							a(href='/logout') Logout
+				// /.navbar-collapse
+			// /.container
+		.container
+			.row
+				.box
+					.col-lg-12
+						h1 Welkom bij uw profiel #{teacher.firstname} #{teacher.lastname}!
+			.row
+				.box
+					.col-lg-12
+						hr
+						h2 Dit zijn uw studenten:
+						table(class="table table-bordered")
 							tr
-								td #{student.firstname}
-								td #{student.lastname}
-								td #{student.birthdate}
-								td #{student.school}
-								td #{student.parent.firstname} #{student.parent.lastname}
-								td #{student.parent.phoneNumber}
-								td #{student.parent.email}
-				div.lessons
-					h2 Voeg een les toe:
-						form(action='/lesson' method='post')
-							table
+								th Voornaam
+								th Achternaam
+								th Geboortedatum
+								th School
+								th Ouder
+								th Telefoonnummer ouder
+								th Email ouder
+							each student in students
 								tr
-									th Voornaam
-									th Achternaam
-									th Gedrag
-									th Aanwezigheid
-									th Huiswerk
-								each student in students
+									td #{student.firstname}
+									td #{student.lastname}
+									td #{student.birthdate}
+									td #{student.school}
+									td #{student.parent.firstname} #{student.parent.lastname}
+									td #{student.parent.phoneNumber}
+									td #{student.parent.email}
+						hr
+			.row
+				.box
+					.col-lg-12.text-center
+						h2 Voeg een les toe:
+							form(action='/lesson' method='post')
+								table(class="table table-bordered")
 									tr
-										td #{student.firstname}
-										td #{student.lastname}
-										td
-											select(type='text' name='behaviour' required)
-												option(value='goed') Goed
-												option(value='voldoende') Voldoende
-												option(value='slecht') Slecht
-										td
-											select(type='text' name='attendance' required)
-												option(value='Aanwezig') Aanwezig
-												option(value='Te laat') Te laat
-												option(value="Afwezig zonder reden") Afwezig zonder reden
-												option(value='Ziek') Ziek
-										td
-											select(type='text' name='homework' required)
-												option(value='gemaakt') Gemaakt
-												option(value='half gemaakt') Half gemaakt
-												option(value='niet gemaakt') Niet gemaakt
-									input(type='hidden' name='studentId' value=student.id)
+										th Voornaam
+										th Achternaam
+										th Gedrag
+										th Aanwezigheid
+										th Huiswerk
+									each student in students
+										tr
+											td #{student.firstname}
+											td #{student.lastname}
+											td
+												select(type='text' name='behaviour' required)
+													option(value='goed') Goed
+													option(value='voldoende') Voldoende
+													option(value='slecht') Slecht
+											td
+												select(type='text' name='attendance' required)
+													option(value='Aanwezig') Aanwezig
+													option(value='Te laat') Te laat
+													option(value="Afwezig zonder reden") Afwezig zonder reden
+													option(value='Ziek') Ziek
+											td
+												select(type='text' name='homework' required)
+													option(value='gemaakt') Gemaakt
+													option(value='half gemaakt') Half gemaakt
+													option(value='niet gemaakt') Niet gemaakt
+										input(type='hidden' name='studentId' value=student.id)
 							br
 							input(type='hidden' name='teacherId' value=teacher.id)
 							input(type='hidden' name='groupId' value=teacher.groupId)
 							input(id='lessonDate' placeholder='Lesdatum' type='' name='date' required)
 							br
-							textarea(type='text' rows=10, cols=50, name='nextHomework' placeholder='Huiswerk voor de volgende les.' required)
+							textarea(type='text', name='nextHomework' placeholder='Huiswerk voor de volgende les.' required)
 							br
 							input(type='submit' Value='Submit')
-			div.mail
-				h2 Verstuur een mail naar alle ouders
-				form(action='/mail' method='post')
-					input(type='text' size=50 name='subject' placeholder='Onderwerp' required)
-					br
-					textarea(type='text' rows=10, cols=50, name='content' placeholder='Bericht' required)
-					br
-					input(type='submit' value='Submit')
-			div.intakes
-				h2 Dit zijn de studenten die nog geaccepteerd moeten worden:
-				each intake in intakes
-					h3 #{intake.firstname} #{intake.lastname}
-					form(action='/intake' method='post')
-						input(type='hidden' name='id' value=intake.id)
-						select(type="text" name="groupId")
-							each klas in klassen
-								option(value=klas.id) #{klas.groupName}
-						input(type='submit' value='Submit')
-			div.addTeacher
-				h2 Voeg leraren toe:
-				form(action='/teacher' method='post')
-					input(type='text' placeholder='Voornaam' name='firstname' required)
-					br
-					input(type='text' placeholder='Achternaam' name='lastname' required)
-					br
-					input(type='text' placeholder='email' name='email' required)
-					br
-					input(id='date' type='' placeholder='Geboortedatum' name='birthdate' required)
-					br
-					input(type='text' placeholder="Telefoonnummer" name='phoneNumber' required)
-					br
-					input(type='radio' name="gender" value="male" required) 
-					| Man
-					input(type='radio' name="gender" value="female" required) 
-					| Vrouw
-					br
-					input(type='text' placeholder='wachtwoord' name='password' required)
-					br
-					select(type="text" name="groupId" required)
-						each klas in klassen
-							option(value=klas.id) #{klas.groupName}
-					br
-					input(type='submit' value='Submit')
-			div.addGroup
-				h2 Voeg klassen toe:
-				form(action='klassen' method='post')
-					input(type='text' placeholder='klasnaam' name='groupName' required)
-					br
-					input(type='submit' value='Submit')
+						hr
+			.row
+				.box
+					.col-lg-12.text-center
+						h2.intro-text.text-center
+							strong Verstuur een mail naar alle ouders
+						form(role='form' action='/mail' method='post')
+								label Onderwerp
+								input.form-control(type='text' name='subject' placeholder='Onderwerp' required)
+								br
+								label Bericht
+								textarea.form-control(type='text' rows=10, cols=50, name='content' placeholder='Bericht' required)
+								br
+								input.btn.btn-default(type='submit' value='Verstuur mail')
+						hr
+		// /.container
 		footer
-			h4 &copy; 2017 Ansaar School Inc. All rights reserved.
+			.container
+				.row
+					.col-lg-12.text-center
+						p &copy; 2017 Ansaar School Inc. All rights reserved.
+		// jQuery
+		//- script(src='../js/jquery.js')
+		// Bootstrap Core JavaScript
+		script(src='../js/bootstrap.min.js')

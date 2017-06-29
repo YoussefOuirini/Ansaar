@@ -130,8 +130,12 @@ app.get('/',  (req,res)=>{
 	});
 });
 
-app.get('/register', (req,res)=>{
-	res.render('public/views/register')
+app.get('/about', (req,res)=>{
+	res.render('public/views/about')
+})
+
+app.get('/contact', (req,res)=>{
+	res.render('public/views/contact')
 })
 
 app.post('/register', (req,res)=>{
@@ -197,7 +201,7 @@ app.post('/login', (req, res) => {
 						throw err;
 					} else {
 						if(teacher !== null && data== true) {
-							req.session.user = teacher;
+							req.session.teacher = teacher;
 							res.redirect('/teacher');
 						} else {
 							res.redirect('/?message=' + encodeURIComponent("Invalid email or password."))
@@ -229,8 +233,8 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/teacher', (req,res)=>{
-	var teacher= req.session.user;
-	 if (teacher === undefined) {
+	var teacher= req.session.teacher;
+	if (teacher === undefined) {
         res.redirect('/?message=' + encodeURIComponent("Please log in to view your profile."));
         return
     } 

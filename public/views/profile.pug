@@ -1,68 +1,134 @@
-html
+html(lang='en')
 	head
-		title Profiel
-	body
+		meta(charset='utf-8')
+		meta(http-equiv='X-UA-Compatible', content='IE=edge')
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+		meta(name='description', content='')
+		meta(name='author', content='')
+		title Profiel - Ansaar School - Hillegom
+		// Bootstrap Core CSS
+		link(href='css/bootstrap.min.css', rel='stylesheet')
+		// Custom CSS
+		link(href='css/business-casual.css', rel='stylesheet')
+		// Fonts
+		link(href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800', rel='stylesheet', type='text/css')
+		link(href='https://fonts.googleapis.com/css?family=Josefin+Slab:100,300,400,600,700,100italic,300italic,400italic,600italic,700italic', rel='stylesheet', type='text/css')
+		// HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+		// WARNING: Respond.js doesn't work if you view the page via file://
+		//if lt IE 9
 		link(rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css")
+		script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
+		script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')
 		script(src="../js/jquery-3.2.1.min.js")
 		script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
 		script(src="../js/datepicker.js")
-		link(rel="stylesheet" href="../css/main.css")
-		header
-			nav
-				div
-					a(href= "/") Home
-				div 
-					a(href='/register') Register
-				div
-					a(href='/logout') Logout
-		main
-			h1 Welcome to your profile #{user.firstname}
-			h2 #{user.firstname} #{user.lastname} #{user.email}
-			div.kindgegevens
-				table 
-					tr
-						th Lesdatum
-						th Voornaam
-						th Achternaam
-						th Aanwezigheid
-						th Gedrag
-						th Huiswerk
-						th Huiswerk voor volgende les
-					each lesson in lessons
-						tr
-							td #{lesson.date}
-							td #{lesson.student.firstname} 
-							td #{lesson.student.lastname}
-							td #{lesson.attendance}
-							td #{lesson.behaviour}
-							td #{lesson.homework} 
-							td #{lesson.nextHomework}
-			div.kindinschrijven
-				h2 Schrijf je kind in:
-				form(action="/kindInschrijven" method="post")
-					input(type='text' placeholder="Voornaam" name="firstname" required)
-					br
-					input(type='text' placeholder="Achternaam" name="lastname" required)
-					br
-					input(id="date" type='date' placeholder="Geboortedatum" name="birthdate" required)
-					br
-					input(type='radio' name="gender" value="male" required) 
-					| Man
-					input(type='radio' name="gender" value="female" required) 
-					| Vrouw
-					br
-					select(type='text' placeholder="School" name="school" required)
-						option(value="Fioretti") Fioretti
-						option(value="Hilmare") Hilmare
-						option(value="Willinkschool") Willinkschool
-						option(value="Anders") Anders
-					br
-					select(type="text" placeholder="niveau" name="level" required)
-						option(value="begin") Niveau 1: kan het alfabet nog niet goed
-						option(value="gevorderd") Niveau 2: mijn kind nog niet goed lezen en schrijven
-						option(value="vergevorderd") Niveau 3: mijn kind kan goed lezen en schrijven
-					br
-					input(type='hidden' name="parentId" value=user.id)
-					input(type='submit' value="Inschrijving versturen")
+	body
+		.brand Ansaar School
+		.address-bar Monseigneur van Leeuwenlaan 11A | 2182 EM Hillegom | 52.288095, 4.579262
+		// Navigation
+		nav.navbar.navbar-default(role='navigation')
+			.container
+				// Brand and toggle get grouped for better mobile display
+				.navbar-header
+					button.navbar-toggle(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1')
+						span.sr-only Toggle navigation
+						span.icon-bar
+						span.icon-bar
+						span.icon-bar
+					// navbar-brand is hidden on larger screens, but visible when the menu is collapsed
+					a.navbar-brand(href='index.html') Ansaar School
+				// Collect the nav links, forms, and other content for toggling
+				#bs-example-navbar-collapse-1.collapse.navbar-collapse
+					ul.nav.navbar-nav
+						li
+							a(href='/') Home
+						li
+							a(href='/about') Over ons
+						li
+							a(href='/contact') Contact
+						li
+							a(href='/logout') Uitloggen
+				// /.navbar-collapse
+			// /.container
+		.container
+			.row
+				.box
+					.col-lg-12
+						table(class="table table-bordered")
+							tr
+								th Lesdatum
+								th Voornaam
+								th Achternaam
+								th Aanwezigheid
+								th Gedrag
+								th Huiswerk
+								th Huiswerk voor volgende les
+							each lesson in lessons
+								tr
+									th #{lesson.date}
+									td #{lesson.student.firstname} 
+									td #{lesson.student.lastname}
+									td #{lesson.attendance}
+									td #{lesson.behaviour}
+									td #{lesson.homework} 
+									td #{lesson.nextHomework}
+						hr
+			.row
+				.box
+					.col-lg-12.text-center
+						h2 Schrijf je kind in:
+						h3
+							form(action="/kindInschrijven" method="post")
+								input(type='text' placeholder="Voornaam" name="firstname" required)
+								br
+								input(type='text' placeholder="Achternaam" name="lastname" required)
+								br
+								input(id="date" type='date' placeholder="Geboortedatum" name="birthdate" required)
+								br
+								input(type='radio' name="gender" value="male" required) 
+								| Man
+								input(type='radio' name="gender" value="female" required) 
+								| Vrouw
+								br
+								select(type='text' placeholder="School" name="school" required)
+									option(value="Fioretti") Fioretti
+									option(value="Hilmare") Hilmare
+									option(value="Willinkschool") Willinkschool
+									option(value="Anders") Anders
+								br
+								select(type="text" placeholder="niveau" name="level" required)
+									option(value="begin") Niveau 1: kan het alfabet nog niet goed
+									option(value="gevorderd") Niveau 2: mijn kind nog niet goed lezen en schrijven
+									option(value="vergevorderd") Niveau 3: mijn kind kan goed lezen en schrijven
+								br
+								input(type='hidden' name="parentId" value=user.id)
+								input(type='submit' value="Inschrijving versturen")
+						hr
+			//- .row
+			//- 	.box
+			//- 		.col-lg-12.text-center
+			//- 			img.img-responsive.img-border.img-full(src='img/slide-3.jpg', alt='')
+			//- 			h2
+			//- 				| Post Title
+			//- 				br
+			//- 				small October 13, 2013
+			//- 			p
+			//- 				| Lid est laborum dolo rumes fugats untras. Etharums ser quidem rerum facilis dolores nemis omnis fugats vitaes nemo minima rerums unsers sadips amets. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+			//- 			a.btn.btn-default.btn-lg(href='#') Read More
+			//- 			hr
+			//- 		.col-lg-12.text-center
+			//- 			ul.pager
+			//- 				li.previous
+			//- 					a(href='#') ← Older
+			//- 				li.next
+			//- 					a(href='#') Newer →
+		// /.container
 		footer
-			h4 &copy; 2017 Ansaar School Inc. All rights reserved.
+			.container
+				.row
+					.col-lg-12.text-center
+						p &copy; 2017 Ansaar School Inc. All rights reserved.
+		// jQuery
+		script(src='js/jquery.js')
+		// Bootstrap Core JavaScript
+		script(src='js/bootstrap.min.js')
