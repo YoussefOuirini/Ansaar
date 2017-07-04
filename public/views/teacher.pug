@@ -112,14 +112,14 @@ html(lang='en')
 													option(value='half gemaakt') Half gemaakt
 													option(value='niet gemaakt') Niet gemaakt
 										input(type='hidden' name='studentId' value=student.id)
-							br
-							input(type='hidden' name='teacherId' value=teacher.id)
-							input(type='hidden' name='groupId' value=teacher.groupId)
-							input(id='lessonDate' placeholder='Lesdatum' type='' name='date' required)
-							br
-							textarea(type='text', name='nextHomework' placeholder='Huiswerk voor de volgende les.' required)
-							br
-							input(type='submit' Value='Submit')
+								br
+								input(type='hidden' name='teacherId' value=teacher.id)
+								input(type='hidden' name='groupId' value=teacher.groupId)
+								input(id='lessonDate' placeholder='Lesdatum' type='' name='date' required)
+								br
+								textarea(type='text', name='nextHomework' rows=10, cols=50, placeholder='Huiswerk voor de volgende les.' required)
+								br
+								input(type='submit' Value='Submit')
 						hr
 			.row
 				.box
@@ -127,14 +127,62 @@ html(lang='en')
 						h2.intro-text.text-center
 							strong Verstuur een mail naar alle ouders
 						form(role='form' action='/mail' method='post')
-								label Onderwerp
-								input.form-control(type='text' name='subject' placeholder='Onderwerp' required)
-								br
-								label Bericht
-								textarea.form-control(type='text' rows=10, cols=50, name='content' placeholder='Bericht' required)
-								br
-								input.btn.btn-default(type='submit' value='Verstuur mail')
+							label Onderwerp
+							input.form-control(type='text' name='subject' placeholder='Onderwerp' required)
+							br
+							label Bericht
+							textarea.form-control(type='text' rows=10, cols=50, name='content' placeholder='Bericht' required)
+							br
+							input.btn.btn-default(type='submit' value='Verstuur mail')
 						hr
+			if intakes.length > 0
+				.row
+					.box
+						.col-lg-12.text-center
+							h3 Dit zijn de studenten die nog geaccepteerd moeten worden:
+							each intake in intakes
+								h3 #{intake.firstname} #{intake.lastname}
+								form(action='/intake' method='post')
+									input(type='hidden' name='id' value=intake.id)
+									select(type="text" name="groupId")
+										each klas in klassen
+											option(value=klas.id) #{klas.groupName}
+									input(type='submit' value='Submit')
+			.row
+				.box
+					.col-lg-12.text-center
+						h3 Voeg een nieuwe leraar toe:
+						form(role='form' action='/teacher' method='post')
+							input.form-control(type='text' placeholder='Voornaam' name='firstname' required)
+							br
+							input.form-control(type='text' placeholder='Achternaam' name='lastname' required)
+							br
+							input.form-control(type='text' placeholder='email' name='email' required)
+							br
+							input(id='date' type='' placeholder='Geboortedatum' name='birthdate' required)
+							br
+							input.form-control(type='text' placeholder="Telefoonnummer" name='phoneNumber' required)
+							br
+							input.radio.radio-inline(type='radio' name="gender" value="male" required) 
+							| Man
+							input.radio.radio-inline(type='radio' name="gender" value="female" required) 
+							| Vrouw
+							br
+							input.form-control(type='text' placeholder='wachtwoord' name='password' required)
+							br
+							select.form-control(type="text" name="groupId" required)
+								each klas in klassen
+									option(value=klas.id) #{klas.groupName}
+							br
+							input.btn.btn-default(type='submit' value='Toevoegen')
+			.row
+				.box
+					.col-lg-12.text-center
+						h2 Voeg een nieuwe klas toe:
+						form(action='klassen' method='post')
+							input(type='text' placeholder='klasnaam' name='groupName' required)
+							br
+							input.btn.btn-default(type='submit' value='Toevoegen')
 		// /.container
 		footer
 			.container

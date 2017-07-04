@@ -25,6 +25,10 @@ h6 {
     letter-spacing: 1px;
 }
 
+.message {
+    color: red;
+}
+
 p {
     font-size: 1.25em;
     line-height: 1.6;

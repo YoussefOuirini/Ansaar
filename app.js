@@ -68,7 +68,8 @@ var Lesson= sequelize.define('lesson', {
 	attendance: Sequelize.STRING,
 	date: Sequelize.STRING,
 	behaviour: Sequelize.STRING,
-	nextHomework: Sequelize.STRING
+	nextHomework: Sequelize.STRING,
+	// emailSend: Sequelize.BOOLEAN
 })
 
 
@@ -120,6 +121,28 @@ app.use(session({
 	resave: true,
 	saveUninitialized: false
 }));
+
+function sendMail(email, onderwerp, message){
+	var fromEmail = new helper.Email('alansaarschool.hillegom@gmail.com');
+	var toEmail= new helper.Email(email)
+	var mail = new helper.Mail(fromEmail, subject, toEmail, content);
+	var subject = onderwerp;
+	var content = new helper.Content('text/plain', message);
+	var mail = new helper.Mail(fromEmail, subject, toEmail, content);
+	var request = sg.emptyRequest({
+	  method: 'POST',
+	  path: '/v3/mail/send',
+	  body: mail.toJSON()
+	});
+	sg.API(request, function (error, response) {
+		if (error) {
+			console.log('Error response received');
+		}
+		console.log(response.statusCode);
+		console.log(response.body);
+		console.log(response.headers);
+	});
+}
 
 // Goes to the index page, which is the homepage
 app.get('/',  (req,res)=>{
@@ -254,6 +277,7 @@ app.get('/teacher', (req,res)=>{
 				}).then((intakes)=>{
 					Group.findAll()
 						.then((klassen)=>{
+							console.log(intakes)
 							res.render('public/views/teacher', {
 								teacher: teacher,
 								students: students,
@@ -394,8 +418,7 @@ app.post('/lesson', (req,res)=>{
 		} else {
 			console.log(req.body.behaviour)
 			if (req.body.behaviour.constructor === Array){	
-				console.log('Array happens: ')
-				var create=[];		
+				var create=[];
 				for (i=0; i < req.body.behaviour.length; i++) {
 					create.push(Lesson.create({
 						behaviour: req.body.behaviour[i],
@@ -408,9 +431,9 @@ app.post('/lesson', (req,res)=>{
 						studentId: req.body.studentId[i]
 					}))
 				}
-				Promise.all(create)
+				return Promise.all(create)
 			} else {
-				Lesson.create({
+				return Lesson.create({
 					behaviour: req.body.behaviour,
 					attendance: req.body.attendance,
 					teacherId: req.body.teacherId,
@@ -423,8 +446,45 @@ app.post('/lesson', (req,res)=>{
 			}
 		}
 	}).then(()=>{
-		res.redirect('/teacher')
+		Lesson.findAll({
+			where: {
+				date: req.body.date,
+				attendance: "Afwezig zonder reden"
+			},
+			include: [{
+				model: Student, as: 'student', include: [{
+					model: Parent, as: 'parent'
+				}]
+			}]
+		}).then((afwezigen)=>{
+			if (afwezigen.length > 0){
+				console.log("Deze zijn afwezig: " + afwezigen)
+				if(afwezigen.constructor=== Array) {
+					for (var i = 0; i < afwezigen.length; i++) {
+						sendMail(afwezigen[i].student.parent.email, "Afwezigheid " + req.body.date, "Uw kind was er niet vandaag.\n Graag willen wij weten waarom.\n\n Directie.")
+					}
+				} else {
+					sendMail(afwezigen.student.parent.email, "Afwezigheid " + req.body.date, "Uw kind was er niet vandaag.\n Graag willen wij weten waarom.\n\n Directie.")
+				}
+			}
+		}).then(()=>{
+			res.redirect('/teacher')
+		})
 	}).then().catch(error=>{console.log(error)})
+})
+
+app.post('/mail', (req,res)=>{
+	Parent.findAll({
+		attributes: ['email']
+	})
+	.then((parents)=>{
+		for (var i=0; i < parents.length; i++) {
+			sendMail(parents[i].email, req.body.subject, req.body.content)
+		}
+	})
+	.then(()=>{
+		res.redirect('/?message=' + encodeURIComponent("Emails zijn verstuurd!"))
+	})
 })
 
 app.get('/logout', (req, res)=> {
@@ -435,38 +495,6 @@ app.get('/logout', (req, res)=> {
         res.redirect('/?message=' + encodeURIComponent("Successfully logged out."));
     })
 });
-
-app.post('/mail', (req,res)=>{
-	Parent.findAll({
-		attributes: ['email']
-	})
-	.then((parents)=>{
-		var fromEmail = new helper.Email('alansaarschool.hillegom@gmail.com');
-		for (var i=0; i < parents.length; i++) {
-			var toEmail= new helper.Email(parents[i].email)
-			var mail = new helper.Mail(fromEmail, subject, toEmail, content);
-			var subject = req.body.subject;
-			var content = new helper.Content('text/plain', req.body.content);
-			var mail = new helper.Mail(fromEmail, subject, toEmail, content);
-			var request = sg.emptyRequest({
-			  method: 'POST',
-			  path: '/v3/mail/send',
-			  body: mail.toJSON()
-			});
-			sg.API(request, function (error, response) {
-				if (error) {
-					console.log('Error response received');
-				}
-				console.log(response.statusCode);
-				console.log(response.body);
-				console.log(response.headers);
-			});
-		}
-	})
-	.then(()=>{
-		res.redirect('/?message=' + encodeURIComponent("Emails zijn verstuurd!"))
-	})
-})
 
 var server = app.listen(3000, function() {
   console.log('The server is running at http//:localhost:' + server.address().port)

@@ -51,28 +51,31 @@ html(lang='en')
 				// /.navbar-collapse
 			// /.container
 		.container
-			.row
-				.box
-					.col-lg-12
-						table(class="table table-bordered")
-							tr
-								th Lesdatum
-								th Voornaam
-								th Achternaam
-								th Aanwezigheid
-								th Gedrag
-								th Huiswerk
-								th Huiswerk voor volgende les
-							each lesson in lessons
-								tr
-									th #{lesson.date}
-									td #{lesson.student.firstname} 
-									td #{lesson.student.lastname}
-									td #{lesson.attendance}
-									td #{lesson.behaviour}
-									td #{lesson.homework} 
-									td #{lesson.nextHomework}
-						hr
+			if lessons.length > 0 
+				.row
+					.box
+						.col-lg-12
+							h2 Lessen van uw kinderen:
+							each student in lesson.students
+								table(class="table table-bordered")
+									tr
+										th Lesdatum
+										th Voornaam
+										th Achternaam
+										th Aanwezigheid
+										th Gedrag
+										th Huiswerk
+										th Huiswerk voor volgende les
+									each lesson in lessons
+										tr
+											th #{lesson.date}
+											td #{lesson.student.firstname} 
+											td #{lesson.student.lastname}
+											td #{lesson.attendance}
+											td #{lesson.behaviour}
+											td #{lesson.homework} 
+											td #{lesson.nextHomework}
+							hr
 			.row
 				.box
 					.col-lg-12.text-center
@@ -129,6 +132,6 @@ html(lang='en')
 					.col-lg-12.text-center
 						p &copy; 2017 Ansaar School Inc. All rights reserved.
 		// jQuery
-		script(src='js/jquery.js')
+		//- script(src='js/jquery.js')
 		// Bootstrap Core JavaScript
-		script(src='js/bootstrap.min.js')
+		script(src='../js/bootstrap.min.js')

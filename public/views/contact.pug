@@ -40,7 +40,7 @@ html(lang='en')
 						li
 							a(href='/') Home
 						li
-							a(href='/about') About
+							a(href='/about') Over ons
 						li
 							a(href='/login') Log in
 						li
@@ -96,25 +96,33 @@ html(lang='en')
 							strong form
 						hr
 						p
-							| Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugiat, vitae, distinctio, possimus repudiandae cupiditate ipsum excepturi dicta neque eaque voluptates tempora veniam esse earum sapiente optio deleniti consequuntur eos voluptatem.
-						form(role='form' action='form-handler-nodb.php' method='post')
+							| Voor verdere vragen og opmerkingen kunt u ons hieronder een bericht invullen! We zullen zo snel mogelijk reageren.
+						//- form(action="https://formspree.io/alansaarschool.hillegom@gmail.com" method="post")
+						//- 	h3 Schrijf uw email
+						//- 	| Email:
+						//- 	input(type="email" name="email")
+						//- 	br
+						//- 	h3 Schrijf uw bericht:
+						//- 	textarea(type="text" name="bericht")
+						//- 	br
+						//- 	input(type="submit" value="Email verzenden")
+						form(role='form' action="https://formspree.io/alansaarschool.hillegom@gmail.com" method='post')
 							.row
 								.form-group.col-lg-4
-									label Name
-									input.form-control(type='text')
+									label Naam
+									input.form-control(type='text' name="naam")
 								.form-group.col-lg-4
-									label Email Address
-									input.form-control(type='email')
+									label Email
+									input.form-control(type='email' name="email")
 								.form-group.col-lg-4
-									label Phone Number
-									input.form-control(type='tel')
+									label Telefoonnummer
+									input.form-control(type='tel' name="telefoonnummer")
 								.clearfix
 								.form-group.col-lg-12
-									label Message
-									textarea.form-control(rows='6')
+									label Bericht
+									textarea.form-control(rows='6' name="bericht")
 								.form-group.col-lg-12
-									input(type='hidden', name='save', value='contact')
-									button.btn.btn-default(type='submit') Submit
+									button.btn.btn-default(type='submit') Email verzenden
 		// /.container
 		footer
 			.container

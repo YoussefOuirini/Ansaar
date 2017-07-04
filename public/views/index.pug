@@ -52,6 +52,10 @@ html(lang='en')
 			.row
 				.box
 					.col-lg-12.text-center
+						h2.message(color=red) #{message}
+			.row
+				.box
+					.col-lg-12.text-center
 						#carousel-example-generic.carousel.slide
 							// Indicators
 							ol.carousel-indicators.hidden-xs
@@ -97,29 +101,18 @@ html(lang='en')
 							|  for allowing us to use the beautiful photos that make this template really come to life. When using this template, make sure your photos are decent. Also make sure that the file size on your photos is kept to a minumum to keep load times to a minimum.
 						p
 							| Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc placerat diam quis nisl vestibulum dignissim. In hac habitasse platea dictumst. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-			.row
-				.box
-					.col-lg-12
-						hr
-						h2.intro-text.text-center
-							| Beautiful boxes 
-							strong to showcase your content
-						hr
-						p #{message}
-						h2 Stuur ons een email als je vragen hebt
-						form(action="https://formspree.io/alansaarschool.hillegom@gmail.com" method="post")
-							h3 Schrijf uw email
-							| Email:
-							input(type="email" name="email")
-							br
-							h3 Schrijf uw bericht:
-							textarea(type="text" name="bericht")
-							br
-							input(type="submit" value="Email verzenden")
-						p
-							| Use as many boxes as you like, and put anything you want in them! They are great for just about anything, the sky's the limit!
-						p
-							| Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc placerat diam quis nisl vestibulum dignissim. In hac habitasse platea dictumst. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+			//- .row
+			//- 	.box
+			//- 		.col-lg-12
+			//- 			hr
+			//- 			h2.intro-text.text-center
+			//- 				| Beautiful boxes 
+			//- 				strong to showcase your content
+			//- 			hr
+			//- 			p
+			//- 				| Use as many boxes as you like, and put anything you want in them! They are great for just about anything, the sky's the limit!
+			//- 			p
+			//- 				| Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc placerat diam quis nisl vestibulum dignissim. In hac habitasse platea dictumst. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
 		// /.container
 		footer
 			.container
