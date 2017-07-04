@@ -14,7 +14,7 @@ $(function() {
 
 $(function() {
 	$( "#lessonDate" ).datepicker({ 
-		dateFormat: 'dd-mm-yy',
+		dateFormat: 'yy-mm-dd',
 		changeMonth: true,
 		changeYear: false,
 		buttonImage: "../img/calendar.gif",

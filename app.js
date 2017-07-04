@@ -66,12 +66,11 @@ var Group= sequelize.define('group', {
 var Lesson= sequelize.define('lesson', {
 	homework: Sequelize.STRING,
 	attendance: Sequelize.STRING,
-	date: Sequelize.STRING,
+	date: Sequelize.DATEONLY,
 	behaviour: Sequelize.STRING,
 	nextHomework: Sequelize.STRING,
 	// emailSend: Sequelize.BOOLEAN
 })
-
 
 // Setting up the model by linking the tables to each other
 Student.belongsTo(Group);
@@ -277,7 +276,6 @@ app.get('/teacher', (req,res)=>{
 				}).then((intakes)=>{
 					Group.findAll()
 						.then((klassen)=>{
-							console.log(intakes)
 							res.render('public/views/teacher', {
 								teacher: teacher,
 								students: students,
@@ -296,15 +294,15 @@ app.get('/profile', (req, res)=> {
         res.redirect('/?message=' + encodeURIComponent("Please log in to view your profile."));
         return
     } 
-    Lesson.findAll({
-    	include: [{model: Student, as:'student', where: {
-    		parentId: user.id
-    	}}]
-    }).then((lessons)=>{
-    	console.log(lessons.student);
+    Student.findAll({
+    	where: {parentId: user.id},
+    	include: [{model: Lesson, as:'lessons'}],
+    	order: [[{model: Lesson, as: 'lessons'}, 'date', 'DESC']]
+    	// order: [[{model: Lesson, as:'lessons'}, 'date', 'DESC']]
+    }).then((students)=>{
     	res.render('public/views/profile', {
     		user: user,
-    		lessons: lessons
+    		students: students
 		});
     })
 });
@@ -416,7 +414,6 @@ app.post('/lesson', (req,res)=>{
 		if(lesson!= null) {
 			res.redirect('/?message=' +encodeURIComponent ("Les is al gemaakt."))
 		} else {
-			console.log(req.body.behaviour)
 			if (req.body.behaviour.constructor === Array){	
 				var create=[];
 				for (i=0; i < req.body.behaviour.length; i++) {

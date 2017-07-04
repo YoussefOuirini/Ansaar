@@ -51,30 +51,32 @@ html(lang='en')
 				// /.navbar-collapse
 			// /.container
 		.container
-			if lessons.length > 0 
+			if students.length > 0
 				.row
 					.box
 						.col-lg-12
 							h2 Lessen van uw kinderen:
-							each student in lesson.students
-								table(class="table table-bordered")
-									tr
-										th Lesdatum
-										th Voornaam
-										th Achternaam
-										th Aanwezigheid
-										th Gedrag
-										th Huiswerk
-										th Huiswerk voor volgende les
-									each lesson in lessons
+							each student in students
+								if student.lessons.length > 0
+									h3 #{student.firstname} #{student.lastname}
+									table(class="table table-bordered")
 										tr
-											th #{lesson.date}
-											td #{lesson.student.firstname} 
-											td #{lesson.student.lastname}
-											td #{lesson.attendance}
-											td #{lesson.behaviour}
-											td #{lesson.homework} 
-											td #{lesson.nextHomework}
+											th Lesdatum
+											th Voornaam
+											th Achternaam
+											th Aanwezigheid
+											th Gedrag
+											th Huiswerk
+											th Huiswerk voor volgende les
+										each lesson in student.lessons
+											tr
+												th #{lesson.date}
+												td #{student.firstname} 
+												td #{student.lastname}
+												td #{lesson.attendance}
+												td #{lesson.behaviour}
+												td #{lesson.homework} 
+												td #{lesson.nextHomework}
 							hr
 			.row
 				.box
