@@ -68,8 +68,7 @@ var Lesson= sequelize.define('lesson', {
 	attendance: Sequelize.STRING,
 	date: Sequelize.DATEONLY,
 	behaviour: Sequelize.STRING,
-	nextHomework: Sequelize.STRING,
-	// emailSend: Sequelize.BOOLEAN
+	nextHomework: Sequelize.STRING
 })
 
 // Setting up the model by linking the tables to each other
@@ -147,7 +146,8 @@ function sendMail(email, onderwerp, message){
 app.get('/',  (req,res)=>{
 	res.render('public/views/index', {
 		// You can also use req.session.message so message won't show in the browser
-		message: req.query.message,
+		messsage: req.session.message,
+		// message: req.query.message,
 		user: req.session.user
 	});
 });
@@ -168,7 +168,7 @@ app.post('/register', (req,res)=>{
 			})
 			.then((user)=> {
 				if(user!== null && req.body.email === user.email) {
-					res.redirect('/?message=' + encodeURIComponent("Gebruiker is al geregistreerd."))
+					res.render("public/views/index", {message: "Gebruiker is al geregistreerd."})
 					return
 				} else {
 					bcrypt.hash(req.body.password, null, null, (err,hash)=>{
@@ -186,7 +186,7 @@ app.post('/register', (req,res)=>{
 							password: hash
 						})
 						.then(()=> {
-							res.redirect('/?message=' + encodeURIComponent("Succesvol geregistreerd!"))
+							res.render("public/views/index", {message: "Succesvol geregistreerd!"});
 						})
 					})
 				}
@@ -200,11 +200,11 @@ app.get('/login', (req,res)=>{
 
 app.post('/login', (req, res) => {
 	if(req.body.email.length ===0) {
-		res.redirect('/?message=' + encodeURIComponent("Invalid email"));
+		res.render("public/views/index", {message: "Verkeerde email!"});
 		return;
 	}
 	if(req.body.password.length ===0) {
-		res.redirect('/?message=' + encodeURIComponent("Invalid password"));
+		res.render("public/views/index", {message: "Verkeerde wachtwoord!"});
 		return;
 	}
 	Parent.findOne({
@@ -226,13 +226,13 @@ app.post('/login', (req, res) => {
 							req.session.teacher = teacher;
 							res.redirect('/teacher');
 						} else {
-							res.redirect('/?message=' + encodeURIComponent("Invalid email or password."))
+							res.render("public/views/index", {message: "Verkeerde email of wachtwoord!"});
 						}
 					}
 				})
 			} else {
 				if(user === null) {
-		        	res.redirect('/?message=' + encodeURIComponent("Does not exist!"));
+					res.render("public/views/index", {message: "Gebruiker bestaat niet!"});
 					return;
 				}
 				bcrypt.compare(req.body.password, user.password, (err, data)=>{
@@ -243,21 +243,21 @@ app.post('/login', (req, res) => {
 							req.session.user = user;
 							res.redirect('/profile');
 						} else {
-							res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
+							res.render("public/views/index", {message: "Verkeerde email of wachtwoord"});
 						}
 					}
 				});
 			}
 		})
 	}), (error)=> {
-		res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
+		res.render("public/views/index", {message: "Verkeerde email of wachtwoord"});
 	};
 });
 
 app.get('/teacher', (req,res)=>{
 	var teacher= req.session.teacher;
 	if (teacher === undefined) {
-        res.redirect('/?message=' + encodeURIComponent("Please log in to view your profile."));
+		res.render("public/views/index", {message: "Login om uw profiel te zien!"});
         return
     } 
 	Teacher.findOne({
@@ -276,12 +276,16 @@ app.get('/teacher', (req,res)=>{
 				}).then((intakes)=>{
 					Group.findAll()
 						.then((klassen)=>{
-							res.render('public/views/teacher', {
-								teacher: teacher,
-								students: students,
-								intakes: intakes,
-								klassen: klassen
-							})
+							Parent.findAll()
+								.then((parents)=>{
+									res.render('public/views/teacher', {
+										teacher: teacher,
+										students: students,
+										intakes: intakes,
+										klassen: klassen,
+										parents: parents
+									})
+								})
 						})
 				})
 			})
@@ -291,7 +295,7 @@ app.get('/teacher', (req,res)=>{
 app.get('/profile', (req, res)=> {
     var user = req.session.user;
     if (user === undefined) {
-        res.redirect('/?message=' + encodeURIComponent("Please log in to view your profile."));
+        res.render("public/views/index", {message: "Login om uw profiel te zien!"});
         return
     } 
     Student.findAll({
@@ -317,7 +321,7 @@ app.post('/kindInschrijven', (req,res)=>{
 				}
 			}).then((student)=>{
 				if(student!==null && req.body.firstname === student.firstname && req.body.lastname === student.lastname) {
-					res.redirect('/?message=' + encodeURIComponent("Uw kind is al ingeschreven."));
+					res.render("public/views/index", {message: "Uw kind is al ingeschreven."});
 					return
 				} else {
 					Student.sync()
@@ -361,7 +365,7 @@ app.post('/teacher', (req,res)=>{
 			}
 		}).then((teacher)=>{
 			if (teacher !== null && teacher.email===req.body.email) {
-				res.redirect('/?message=' + encodeURIComponent("Email van de leraar is al bezet"))
+				res.render("public/views/index", {message: "Email van de leraar is al bezet"});
 				return
 			} else {
 				bcrypt.hash("pizza", null, null, (err,hash)=>{
@@ -393,7 +397,7 @@ app.post('/klassen', (req,res)=>{
 		}
 	}).then((klas)=>{
 		if(klas!==null) {
-			res.redirect('/?message=' + encodeURIComponent("Klasnaam is al bezet"))
+			res.render("public/views/index", {message: "Klasnaam is al bezet"});
 		} else {
 			Group.create({
 				groupName: req.body.groupName
@@ -412,7 +416,7 @@ app.post('/lesson', (req,res)=>{
 		}
 	}).then((lesson)=>{
 		if(lesson!= null) {
-			res.redirect('/?message=' +encodeURIComponent ("Les is al gemaakt."))
+			res.render("public/views/index", {message: "Les is al gemaakt"});
 		} else {
 			if (req.body.behaviour.constructor === Array){	
 				var create=[];
@@ -465,23 +469,51 @@ app.post('/lesson', (req,res)=>{
 				}
 			}
 		}).then(()=>{
-			res.redirect('/teacher')
+			Lesson.findAll({
+				where: {
+					date: req.body.date,
+					homework: "niet gemaakt"
+				},
+				include: [{
+					model: Student, as: 'student', include: [{
+						model: Parent, as: 'parent'
+					}]
+				}]
+			}).then((geenhuiswerk)=>{
+				if (geenhuiswerk.length > 0){
+					console.log("Deze studenten hebben geen huiswerk gemaakt: " + geenhuiswerk)
+					if(geenhuiswerk.constructor=== Array) {
+						for (var i = 0; i < geenhuiswerk.length; i++) {
+							sendMail(geenhuiswerk[i].student.parent.email, "Geen huiswerk gemaakt " + req.body.date, "Uw kind heeft geen huiswerk gemaakt.\n Graag willen wij weten waarom.\n\n Directie.")
+						}
+					} else {
+						sendMail(geenhuiswerk.student.parent.email, "Geen huiswerk gemaakt " + req.body.date, "Uw kind heeft geen huiswerk gemaakt.\n Graag willen wij weten waarom.\n\n Directie.")
+					}
+				}
+			}).then(()=>{
+				res.redirect('/teacher')
+			})
 		})
 	}).then().catch(error=>{console.log(error)})
 })
 
 app.post('/mail', (req,res)=>{
-	Parent.findAll({
-		attributes: ['email']
-	})
-	.then((parents)=>{
-		for (var i=0; i < parents.length; i++) {
-			sendMail(parents[i].email, req.body.subject, req.body.content)
-		}
-	})
-	.then(()=>{
-		res.redirect('/?message=' + encodeURIComponent("Emails zijn verstuurd!"))
-	})
+	if (req.body.parentsmail=== 'all'){
+		Parent.findAll({
+			attributes: ['email']
+		})
+		.then((parents)=>{
+			for (var i=0; i < parents.length; i++) {
+				sendMail(parents[i].email, req.body.subject, req.body.content)
+			}
+		})
+		.then(()=>{
+			res.render("public/views/index", {message: "Emails zijn naar alle ouders verstuurd"});
+		})
+	} else {
+		sendMail(req.body.parentsmail, req.body.subject, req.body.content);
+		res.render("public/views/index", {message: `Email naar ${req.body.parentsmail} is verstuurd.`});
+	}
 })
 
 app.get('/logout', (req, res)=> {
@@ -489,7 +521,7 @@ app.get('/logout', (req, res)=> {
         if(error) {
             throw error;
         }
-        res.redirect('/?message=' + encodeURIComponent("Successfully logged out."));
+        res.render("public/views/index", {message: "U bent uitgelogd! Tot de volgende keer!"});
     })
 });
 

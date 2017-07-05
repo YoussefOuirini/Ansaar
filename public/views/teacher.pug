@@ -127,6 +127,12 @@ html(lang='en')
 						h2.intro-text.text-center
 							strong Verstuur een mail naar alle ouders
 						form(role='form' action='/mail' method='post')
+							label Ouders
+							select.form-control(type='text' name='parentsmail' required)
+								option(value='all') Alle ouders
+								hr
+								each parent in parents
+									option(value=parent.email) #{parent.email}
 							label Onderwerp
 							input.form-control(type='text' name='subject' placeholder='Onderwerp' required)
 							br
@@ -142,6 +148,7 @@ html(lang='en')
 							h3 Dit zijn de studenten die nog geaccepteerd moeten worden:
 							each intake in intakes
 								h3 #{intake.firstname} #{intake.lastname}
+								h4 #{intake.level}
 								form(action='/intake' method='post')
 									input(type='hidden' name='id' value=intake.id)
 									select(type="text" name="groupId")
